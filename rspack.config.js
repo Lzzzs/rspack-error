@@ -135,6 +135,42 @@ const config = defineConfig({
 					}
 				]
 			},
+      {
+        test: /\.(j|t)s$/,
+        exclude: [/[\\/]node_modules[\\/]/],
+        loader: 'builtin:swc-loader',
+        options: {
+          sourceMap: false,
+          jsc: {
+            parser: {
+              syntax: 'typescript',
+            },
+            externalHelpers: true,
+          },
+        },
+      },
+      {
+        test: /\.(j|t)sx$/,
+        loader: 'builtin:swc-loader',
+        exclude: [/[\\/]node_modules[\\/]/],
+        options: {
+          sourceMap: false,
+          jsc: {
+            parser: {
+              syntax: 'typescript',
+              tsx: true,
+            },
+            transform: {
+              react: {
+                runtime: 'automatic',
+                development: !isProduction,
+                refresh: !isProduction,
+              },
+            },
+            externalHelpers: true,
+          },
+        },
+      },
 		],
 	},
 	optimization: {
@@ -163,7 +199,12 @@ const config = defineConfig({
 		new rspack.HtmlRspackPlugin({
 			template: './public/index.html'
 		}),
-	]
+	],
+  experiments: {
+    rspackFuture: {
+      disableTransformByDefault: true
+    }
+  }
 });
 
 module.exports = config;
